@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101d20">
+  <meta name="description" content="Преобразуйте фотографию в интерактивную модель рельефа. Изучайте высоты, уклоны и горизонтали, вращайте местность и сохраняйте карту.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Terra Forma — фотография становится рельефом">
+  <meta property="og:description" content="Локальная лаборатория рельефа: высота по яркости снимка, 3D-визуализация, горизонтали и уклоны.">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:image" content="screenshots/photo-terrain.png">
+  <title>Terra Forma — лаборатория рельефа</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M2 25 10 13l5 7 6-11 9 16z' fill='none' stroke='%23e5b85c' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Terra Forma","applicationCategory":"EducationalApplication","operatingSystem":"Any","inLanguage":["ru","en"],"description":"A browser-based terrain visualization tool that converts local photographs into height maps and renders elevation, slope, and contour lines."}</script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="./"><span class="brand-symbol" aria-hidden="true">△</span><span>TERRA <b>FORMA</b></span></a>
+      <div class="top-status"><i></i> Лаборатория рельефа <span>/</span> <span>Локальная обработка</span></div>
+      <button class="export-button" id="exportButton" type="button">Сохранить вид <b>↓</b></button>
+    </header>
+    <main>
+      <section class="intro">
+        <div><p class="eyebrow">Форма земли из света и тени</p><h1>Читать поверхность<br><em>как карту.</em></h1><p class="intro-copy">Загрузите снимок или исследуйте образец. Яркость становится высотой, свет — объёмом, а линии — маршрутом.</p></div>
+        <div class="intro-mark"><span>ВЫСОТА</span><b>≋</b><span>↑</span></div>
+      </section>
+
+      <section class="workbench" aria-label="Инструмент преобразования фотографии в рельеф">
+        <aside class="control-panel">
+          <div class="section-head"><div><span class="eyebrow">ИСТОЧНИК</span><h2>Исследовать</h2></div><span class="section-index">01</span></div>
+          <label class="upload-box" for="photoInput"><span class="upload-icon">↑</span><span><b id="sourceName">Загрузить фотографию</b><small>JPG, PNG, WEBP · обработка только на устройстве</small></span><input id="photoInput" type="file" accept="image/*"></label>
+          <p class="field-label">Или выбрать алгоритмический ландшафт</p>
+          <div class="preset-list" role="group" aria-label="Образцы ландшафта">
+            <button class="preset is-active" type="button" data-preset="cirque" aria-pressed="true"><span class="preset-line"></span><span><b>Ледниковый цирк</b><small>Замкнутая долина и осыпи</small></span><i>01</i></button>
+            <button class="preset" type="button" data-preset="ridge" aria-pressed="false"><span class="preset-line"></span><span><b>Базальтовый хребет</b><small>Ребро и боковые отроги</small></span><i>02</i></button>
+            <button class="preset" type="button" data-preset="coast" aria-pressed="false"><span class="preset-line"></span><span><b>Прибрежная терраса</b><small>Береговая ступень и дюны</small></span><i>03</i></button>
+          </div>
+
+          <div class="slider-control"><div><label for="heightInput">Высота рельефа</label><output id="heightOutput">1.8×</output></div><input id="heightInput" type="range" min="5" max="35" value="18"><small>Ниже <span>Преувеличение высоты</span> Выше</small></div>
+          <div class="slider-control"><div><label for="contourInput">Шаг горизонталей</label><output id="contourOutput">10 уровней</output></div><input id="contourInput" type="range" min="5" max="20" value="10"><small>Реже <span>Линии рельефа</span> Чаще</small></div>
+          <div class="palette-control"><span class="field-label">Цветовая шкала</span><div class="palette-options" role="group" aria-label="Цветовая шкала"><button type="button" class="palette-button is-active" data-palette="earth" aria-pressed="true"><i class="earth-swatch"></i>Земля</button><button type="button" class="palette-button" data-palette="slate" aria-pressed="false"><i class="slate-swatch"></i>Сланец</button><button type="button" class="palette-button" data-palette="mono" aria-pressed="false"><i class="mono-swatch"></i>Ч/б</button></div></div>
+          <p class="privacy-note"><span>◉</span> Изображение не отправляется на сервер.</p>
+        </aside>
+
+        <section class="terrain-panel" aria-label="Визуализация модели рельефа">
+          <div class="terrain-toolbar"><div class="view-modes" role="group" aria-label="Способ отображения"><button class="mode-button is-active" type="button" data-mode="terrain" aria-pressed="true">Рельеф</button><button class="mode-button" type="button" data-mode="elevation" aria-pressed="false">Высота</button><button class="mode-button" type="button" data-mode="slope" aria-pressed="false">Уклон</button></div><div class="view-tools"><span class="drag-hint">Перетаскивайте, чтобы вращать</span><button id="resetView" type="button" title="Сбросить ракурс">↺</button></div></div>
+          <div class="terrain-stage"><canvas id="terrainCanvas" aria-label="Трёхмерная модель рельефа"></canvas><div class="stage-axis axis-north">N <i>↑</i></div><div class="stage-caption"><span id="terrainLabel">ОБРАЗЕЦ · ЛЕДНИКОВЫЙ ЦИРК</span><span id="zoomLabel">100%</span></div><div class="algorithm-chip"><i></i><span id="algorithmLabel">Яркость → высота → поверхность</span></div></div>
+          <div class="facts-bar"><div><span class="fact-label">Максимальная отметка</span><strong id="peakValue">2 840 <small>м</small></strong></div><div><span class="fact-label">Перепад высот</span><strong id="reliefValue">1 260 <small>м</small></strong></div><div><span class="fact-label">Уклон поверхности</span><strong id="slopeValue">18 <small>°</small></strong></div><div class="sample-size"><span class="fact-label">Сетка модели</span><strong>72 × 56</strong></div></div>
+          <div class="method-note"><span class="method-number">02</span><p><b>От светотени к форме.</b> Снимок переводится в карту яркости. Сглаживание убирает шум, а соседние пиксели собираются в непрерывную поверхность.</p><button id="methodToggle" type="button" aria-expanded="false">Как устроено <span>＋</span></button></div>
+          <div class="method-details" id="methodDetails" hidden><div><b>01 / Яркость</b><p>Яркие области считаются возвышенностями, тёмные — низинами. Контраст снимка нормализуется.</p></div><div><b>02 / Сглаживание</b><p>Небольшое усреднение соседей убирает артефакты и сохраняет крупные формы.</p></div><div><b>03 / Горизонтали</b><p>Линии строятся интерполяцией пересечений заданных высот между соседними точками.</p></div></div>
+        </section>
+      </section>
+      <footer class="footer"><span>TERRA FORMA / ПОЛЕВОЙ АТЛАС РЕЛЬЕФА</span><span>Поворачивайте модель мышью или пальцем</span><a href="README.md">О проекте ↗</a></footer>
+    </main>
+  </div>
+  <script src="app.js" defer></script>
+</body>
+</html>
