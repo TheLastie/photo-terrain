@@ -84,6 +84,35 @@
   function pointerMove(e){if(!state.dragging)return;const dx=e.clientX-state.lastX,dy=e.clientY-state.lastY;state.lastX=e.clientX;state.lastY=e.clientY;state.yaw-=dx*.008;state.tilt=clamp(state.tilt+dy*.004,.2,1.05);queueDraw();}
   function pointerUp(){state.dragging=false;}
   function exportImage(){const a=document.createElement('a');a.download='terra-forma-relief.png';a.href=canvas.toDataURL('image/png');a.click();}
+  function exportMesh(){
+    const lines=['# Terra Forma relative heightfield','o terra_forma_surface','# Grid: 72 x 56 vertices.','# Open surface, not a closed printable solid.','# Horizontal span: 100 arbitrary units.','# Elevations are relative and inferred from image brightness.'];
+    const width=100,depth=width*(H-1)/(W-1),heightScale=30*state.exaggeration/1.8;
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+      const px=(x/(W-1)-.5)*width,py=(.5-y/(H-1))*depth,pz=(heights[y][x]-.42)*state.exaggeration*.7*heightScale;
+      lines.push(`v ${px.toFixed(4)} ${py.toFixed(4)} ${pz.toFixed(4)}`);
+    }
+    for(let y=0;y<H-1;y++)for(let x=0;x<W-1;x++){
+      const a=y*W+x+1,b=a+1,c=a+W,d=c+1;
+      lines.push(`f ${a} ${b} ${c}`,`f ${b} ${d} ${c}`);
+    }
+    const blob=new Blob([lines.join('\n')+'\n'],{type:'text/plain'}),url=URL.createObjectURL(blob),link=document.createElement('a');
+    link.href=url;link.download='terra-forma-heightfield.obj';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }
+  function exportHeightMap(){
+    const map=document.createElement('canvas');map.width=W;map.height=H;
+    const mapCtx=map.getContext('2d'),image=mapCtx.createImageData(W,H);
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+      const i=(y*W+x)*4,value=Math.round(clamp(heights[y][x])*255);
+      image.data[i]=image.data[i+1]=image.data[i+2]=value;image.data[i+3]=255;
+    }
+    mapCtx.putImageData(image,0,0);
+    map.toBlob(blob=>{
+      if(!blob)return;
+      const url=URL.createObjectURL(blob),link=document.createElement('a');
+      link.href=url;link.download='terra-forma-heightmap-72x56.png';link.click();
+      setTimeout(()=>URL.revokeObjectURL(url),1000);
+    },'image/png');
+  }
   document.querySelectorAll('.preset').forEach(b=>b.addEventListener('click',()=>selectPreset(b)));
   document.querySelectorAll('.mode-button').forEach(b=>b.addEventListener('click',()=>setMode(b)));
   document.querySelectorAll('.palette-button').forEach(b=>b.addEventListener('click',()=>{state.palette=b.dataset.palette;document.querySelectorAll('.palette-button').forEach(x=>{const on=x===b;x.classList.toggle('is-active',on);x.setAttribute('aria-pressed',String(on));});queueDraw();}));
@@ -92,6 +121,8 @@
   $('photoInput').addEventListener('change',e=>loadPhoto(e.target.files[0]));
   $('resetView').addEventListener('click',()=>{state.yaw=-.42;state.tilt=.55;state.zoom=1;queueDraw();});
   $('exportButton').addEventListener('click',exportImage);
+  $('exportMeshButton').addEventListener('click',exportMesh);
+  $('exportHeightButton').addEventListener('click',exportHeightMap);
   $('methodToggle').addEventListener('click',()=>{const panel=$('methodDetails'),open=panel.hidden;panel.hidden=!open;$('methodToggle').setAttribute('aria-expanded',String(open));$('methodToggle').innerHTML=open?'Как устроено <span>−</span>':'Как устроено <span>＋</span>';});
   canvas.addEventListener('pointerdown',pointerDown);canvas.addEventListener('pointermove',pointerMove);canvas.addEventListener('pointerup',pointerUp);canvas.addEventListener('pointercancel',pointerUp);
   canvas.addEventListener('wheel',e=>{e.preventDefault();state.zoom=clamp(state.zoom+(e.deltaY<0?.08:-.08),.72,1.5);queueDraw();},{passive:false});
