@@ -52,7 +52,16 @@
         </aside>
 
         <section class="terrain-panel" aria-label="Визуализация модели рельефа">
-          <div class="terrain-toolbar"><div class="view-modes" role="group" aria-label="Способ отображения"><button class="mode-button is-active" type="button" data-mode="terrain" aria-pressed="true">Рельеф</button><button class="mode-button" type="button" data-mode="elevation" aria-pressed="false">Высота</button><button class="mode-button" type="button" data-mode="slope" aria-pressed="false">Уклон</button></div><div class="view-tools"><span class="drag-hint">Перетаскивайте, чтобы вращать</span><button class="export-button mesh-export" id="exportMeshButton" type="button" aria-label="Скачать относительную сетку высот в формате OBJ" title="Скачать сетку высот для Blender и других 3D-редакторов">OBJ <b>↓</b></button><button class="export-button mesh-export height-export" id="exportHeightButton" type="button" aria-label="Скачать чёрно-белую карту высот в PNG" title="Карта высот 72 на 56 пикселей для прототипирования в 3D-редакторе">Карта <b>↓</b></button><button id="resetView" type="button" title="Сбросить ракурс">↺</button></div></div>
+          <div class="terrain-toolbar"><div class="view-modes" role="group" aria-label="Способ отображения"><button class="mode-button is-active" type="button" data-mode="terrain" aria-pressed="true">Рельеф</button><button class="mode-button" type="button" data-mode="elevation" aria-pressed="false">Высота</button><button class="mode-button" type="button" data-mode="slope" aria-pressed="false">Уклон</button></div><div class="view-tools"><span class="drag-hint">Перетаскивайте, чтобы вращать</span><button class="export-button mesh-export" id="exportMeshButton" type="button" aria-label="Скачать относительную сетку высот в формате OBJ" title="Открытая поверхность для блок-аутов в Blender и игровых редакторах">OBJ <b>↓</b></button><button class="export-button mesh-export height-export" id="exportHeightButton" type="button" aria-label="Скачать чёрно-белую карту высот в PNG" title="Карта высот 72 на 56 пикселей для прототипирования в 3D-редакторе">Карта <b>↓</b></button><button id="resetView" type="button" title="Сбросить ракурс">↺</button></div></div>
+          <details class="print-export">
+            <summary><span>Подготовить к 3D-печати</span><small>Закрытая сетка · OBJ</small></summary>
+            <div class="print-export-form">
+              <label for="printWidth">Ширина модели <span>мм</span><input id="printWidth" type="number" min="40" max="300" step="10" value="150" inputmode="decimal"></label>
+              <label for="printBase">Толщина основания <span>мм</span><input id="printBase" type="number" min="0.8" max="30" step="0.1" value="3" inputmode="decimal"></label>
+              <button class="export-button print-export-button" id="exportPrintMeshButton" type="button">Скачать закрытый OBJ <b>↓</b></button>
+              <p>Глубина сохранит пропорции карты. Высота рельефа следует ползунку выше.</p>
+            </div>
+          </details>
           <div class="terrain-stage"><canvas id="terrainCanvas" aria-label="Трёхмерная модель рельефа"></canvas><div class="stage-axis axis-north">N <i>↑</i></div><div class="stage-caption"><span id="terrainLabel">ОБРАЗЕЦ · ЛЕДНИКОВЫЙ ЦИРК</span><span id="zoomLabel">100%</span></div><div class="algorithm-chip"><i></i><span id="algorithmLabel">Яркость → высота → поверхность</span></div></div>
           <div class="facts-bar"><div><span class="fact-label">Максимальная отметка</span><strong id="peakValue">2 840 <small>м</small></strong></div><div><span class="fact-label">Перепад высот</span><strong id="reliefValue">1 260 <small>м</small></strong></div><div><span class="fact-label">Уклон поверхности</span><strong id="slopeValue">18 <small>°</small></strong></div><div class="sample-size"><span class="fact-label">Сетка модели</span><strong>72 × 56</strong></div></div>
           <div class="method-note"><span class="method-number">02</span><p><b>От светотени к форме.</b> Снимок переводится в карту яркости. Сглаживание убирает шум, а соседние пиксели собираются в непрерывную поверхность.</p><button id="methodToggle" type="button" aria-expanded="false">Как устроено <span>＋</span></button></div>
@@ -63,6 +72,6 @@
     </main>
   </div>
   <script src="preview-bridge.js" defer></script>
-  <script src="app.js" defer></script>
+  <script src="app.js?v=3" defer></script>
 </body>
 </html>
