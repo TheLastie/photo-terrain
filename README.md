@@ -16,6 +16,7 @@ Terra Forma — браузерная лаборатория рельефа. За
 - Настройка преувеличения высоты, числа горизонталей и цветовой шкалы.
 - Сохранение текущего вида в PNG.
 - Экспорт сетки высот в OBJ и чёрно-белой карты высот в PNG для быстрых 3D- и игровых блок-аутов.
+- Подготовка закрытой модели рельефа к 3D-печати: задайте ширину и толщину основания, затем скачайте OBJ с основанием и боковыми стенками.
 - Фотография обрабатывается в браузере и не отправляется на сервер.
 
 Значения высоты показаны в относительных единицах, так как фотографии не содержат данных об абсолютной высоте или масштабе. Это инструмент визуального исследования светотени, а не геодезическая съёмка.
@@ -36,6 +37,7 @@ Terra Forma is a browser-based terrain lab. Upload a photograph and its brightne
 - Adjust vertical exaggeration, contour count, and color ramp.
 - Save the current view as a PNG.
 - Export the heightfield as an OBJ mesh or a grayscale PNG height map for quick 3D and game-level blockouts.
+- Prepare a closed relief model for 3D printing: choose the model width and base thickness, then export an OBJ with a base and side walls.
 - The photograph is processed in the browser and is never uploaded.
 
 Height values are relative because photographs do not contain absolute elevation or scale data. This is a visual study of light and shape, not a surveying instrument.
