@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="canonical" href="https://thelastie.github.io/photo-terrain/">
   <meta name="theme-color" content="#101d20">
-<meta name="description" content="Превратите свет и тени снимка в условный рельеф, проверьте уклоны и скачайте OBJ-сетку или PNG-карту высот для 3D-блок-аута.">
+ <meta name="description" content="Преобразуйте фотографию в редактируемый рельеф, проверьте уклоны и подготовьте модель к 3D-печати в STL или OBJ.">
 <meta name="geo.region" content="RU-BA">
 <meta name="geo.placename" content="Уфа, Республика Башкортостан">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://thelastie.github.io/photo-terrain/">
   <meta property="og:title" content="Terra Forma — фотография становится рельефом">
-  <meta property="og:description" content="Локальная лаборатория рельефа: высота по яркости снимка, интерактивная 3D-модель и OBJ/PNG-экспорт для быстрых прототипов.">
+  <meta property="og:description" content="Локальная лаборатория рельефа: модель рельефа из фотографии, карта высот и закрытая STL/OBJ-модель с заданным масштабом для 3D-печати.">
   <meta property="og:locale" content="ru_RU">
   <meta property="og:locale:alternate" content="en_US">
   <meta property="og:image" content="screenshots/photo-terrain.png">
@@ -19,7 +19,7 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M2 25 10 13l5 7 6-11 9 16z' fill='none' stroke='%23e5b85c' stroke-width='2'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="product-tools.css">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Terra Forma","applicationCategory":"EducationalApplication","operatingSystem":"Any","inLanguage":["ru","en"],"description":"A browser-based terrain visualization tool that converts local photographs into height maps and renders elevation, slope, and contour lines."}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Terra Forma","applicationCategory":"DesignApplication","operatingSystem":"Any","inLanguage":["ru","en"],"description":"A browser-based terrain model maker that turns local photographs into height maps and closed, scaled STL or OBJ meshes for 3D printing."}</script>
 </head>
 <body>
   <div class="shell">
@@ -59,7 +59,8 @@
               <label for="printWidth">Ширина модели <span>мм</span><input id="printWidth" type="number" min="40" max="300" step="10" value="150" inputmode="decimal"></label>
               <label for="printBase">Толщина основания <span>мм</span><input id="printBase" type="number" min="0.8" max="30" step="0.1" value="3" inputmode="decimal"></label>
               <button class="export-button print-export-button" id="exportPrintMeshButton" type="button">Скачать закрытый OBJ <b>↓</b></button>
-              <p>Глубина сохранит пропорции карты. Высота рельефа следует ползунку выше.</p>
+              <button class="export-button print-export-button" id="exportStlButton" type="button" aria-label="Скачать закрытую STL-модель в миллиметрах для слайсера" title="Закрытая модель с заданным размером, готовая к проверке в слайсере">Скачать STL для печати <b>↓</b></button>
+              <p>Ширина и основание заданы в миллиметрах. STL можно открыть в слайсере; высота рельефа следует ползунку выше. Форма оценивается по яркости снимка и не заменяет топографическую съёмку.</p>
             </div>
           </details>
           <div class="terrain-stage"><canvas id="terrainCanvas" aria-label="Трёхмерная модель рельефа"></canvas><div class="stage-axis axis-north">N <i>↑</i></div><div class="stage-caption"><span id="terrainLabel">ОБРАЗЕЦ · ЛЕДНИКОВЫЙ ЦИРК</span><span id="zoomLabel">100%</span></div><div class="algorithm-chip"><i></i><span id="algorithmLabel">Яркость → высота → поверхность</span></div></div>

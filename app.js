@@ -138,6 +138,40 @@
     const blob=new Blob([lines.join('\n')+'\n'],{type:'text/plain'}),url=URL.createObjectURL(blob),link=document.createElement('a');
     link.href=url;link.download=`terra-forma-print-${Math.round(width)}mm-base-${base.toFixed(1).replace('.','-')}mm.obj`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
   }
+  function exportPrintableStl(){
+    const widthInput=$('printWidth'),baseInput=$('printBase');
+    if(!widthInput.reportValidity()||!baseInput.reportValidity())return;
+    const width=Number(widthInput.value),base=Number(baseInput.value);
+    if(!Number.isFinite(width)||!Number.isFinite(base))return;
+    const depth=width*(H-1)/(W-1),peak=width*.3*state.exaggeration/1.8,count=W*H;
+    const vertices=[];
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++)vertices.push([width*x/(W-1),depth*y/(H-1),base+.2+clamp(heights[y][x])*peak]);
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++)vertices.push([width*x/(W-1),depth*y/(H-1),0]);
+    const triangles=[];
+    const top=(x,y)=>y*W+x,bottom=(x,y)=>count+y*W+x;
+    for(let y=0;y<H-1;y++)for(let x=0;x<W-1;x++){
+      const a=top(x,y),b=top(x+1,y),c=top(x,y+1),d=top(x+1,y+1);
+      triangles.push([a,b,c],[b,d,c]);
+      const ba=bottom(x,y),bb=bottom(x+1,y),bc=bottom(x,y+1),bd=bottom(x+1,y+1);
+      triangles.push([ba,bc,bb],[bb,bc,bd]);
+    }
+    const addSide=(u,v)=>{const ub=u+count,vb=v+count;triangles.push([v,u,ub],[v,ub,vb]);};
+    for(let x=0;x<W-1;x++)addSide(top(x,0),top(x+1,0));
+    for(let y=0;y<H-1;y++)addSide(top(W-1,y),top(W-1,y+1));
+    for(let x=W-1;x>0;x--)addSide(top(x,H-1),top(x-1,H-1));
+    for(let y=H-1;y>0;y--)addSide(top(0,y),top(0,y-1));
+    const lines=['solid terra_forma'];
+    for(const ids of triangles){
+      const [a,b,c]=ids.map(id=>vertices[id]);
+      const u=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],v=[c[0]-a[0],c[1]-a[1],c[2]-a[2]];
+      const normal=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];
+      const length=Math.hypot(...normal)||1;
+      lines.push(`  facet normal ${normal.map(n=>(n/length).toFixed(6)).join(' ')}`,'    outer loop',...ids.map(id=>`      vertex ${vertices[id].map(n=>n.toFixed(3)).join(' ')}`),'    endloop','  endfacet');
+    }
+    lines.push('endsolid terra_forma');
+    const blob=new Blob([lines.join('\n')+'\n'],{type:'model/stl'}),url=URL.createObjectURL(blob),link=document.createElement('a');
+    link.href=url;link.download=`terra-forma-print-${Math.round(width)}mm.stl`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }
   function exportHeightMap(){
     const map=document.createElement('canvas');map.width=W;map.height=H;
     const mapCtx=map.getContext('2d'),image=mapCtx.createImageData(W,H);
@@ -163,6 +197,7 @@
   $('exportButton').addEventListener('click',exportImage);
   $('exportMeshButton').addEventListener('click',exportMesh);
   $('exportPrintMeshButton').addEventListener('click',exportClosedMesh);
+  $('exportStlButton').addEventListener('click',exportPrintableStl);
   $('exportHeightButton').addEventListener('click',exportHeightMap);
   $('methodToggle').addEventListener('click',()=>{const panel=$('methodDetails'),open=panel.hidden;panel.hidden=!open;$('methodToggle').setAttribute('aria-expanded',String(open));$('methodToggle').innerHTML=open?'Как устроено <span>−</span>':'Как устроено <span>＋</span>';});
   canvas.addEventListener('pointerdown',pointerDown);canvas.addEventListener('pointermove',pointerMove);canvas.addEventListener('pointerup',pointerUp);canvas.addEventListener('pointercancel',pointerUp);
