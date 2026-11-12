@@ -2,3 +2,13 @@
 .mesh-export{padding:5px 8px;font-size:8px;line-height:1;white-space:nowrap}
 .mesh-export b{font-size:12px;margin-left:4px}
 @media(max-width:600px){.view-tools{gap:5px}.mesh-export{padding:5px 6px}.drag-hint{max-width:100px;text-align:right}}
+
+/* Phone toolbar: let view modes and export buttons wrap instead of overlapping */
+@media (max-width: 560px) {
+  .terrain-toolbar { flex-wrap: wrap; height: auto; min-height: 48px; padding: 6px 0; row-gap: 6px; }
+  .view-modes { flex: 1 1 100%; }
+  .view-tools { display: flex; align-items: center; gap: 6px; margin-left: auto; flex-wrap: wrap; }
+  .view-tools .drag-hint { display: none; }
+  .view-tools .export-button, .view-tools #resetView { flex: 0 0 auto; width: auto; max-width: none; white-space: nowrap; min-height: 40px; min-width: 44px; padding: 8px 12px; font-size: 11px; }
+  .view-tools .export-button b { font-size: 13px; margin-left: 4px; }
+}
